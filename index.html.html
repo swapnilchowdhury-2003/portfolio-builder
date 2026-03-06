@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Builder</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #060810;
+  --s1: #0b0f1c;
+  --s2: #101525;
+  --s3: #161d30;
+  --border: #1a2540;
+  --border2: #243352;
+  --text: #dde8f8;
+  --muted: #526480;
+  --dim: #243352;
+  --cyan: #00d4ff;
+  --green: #00e5a0;
+  --yellow: #ffd060;
+  --red: #ff5f7e;
+  --purple: #b48eff;
+  --orange: #ff9f5a;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,212,255,0.07),transparent);pointer-events:none;z-index:0;}
+
+.app{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:28px 16px 80px;}
+
+/* HEADER */
+.hdr{text-align:center;margin-bottom:40px;}
+.hdr-badge{display:inline-flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border2);border-radius:50px;padding:7px 18px;margin-bottom:18px;font-size:0.78rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.hdr h1{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;line-height:1.2;}
+.hdr p{color:var(--muted);font-size:0.92rem;}
+
+/* PROGRESS STEPS */
+.psteps{display:flex;align-items:center;justify-content:center;margin-bottom:36px;gap:0;}
+.ps-item{display:flex;flex-direction:column;align-items:center;gap:5px;opacity:0.35;transition:opacity 0.3s;}
+.ps-item.active{opacity:1;}
+.ps-item.done{opacity:0.65;}
+.ps-num{width:34px;height:34px;border-radius:50%;border:2px solid var(--border2);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;transition:all 0.3s;}
+.ps-item.active .ps-num{border-color:var(--cyan);background:rgba(0,212,255,0.12);color:var(--cyan);box-shadow:0 0 14px rgba(0,212,255,0.25);}
+.ps-item.done .ps-num{border-color:var(--green);background:rgba(0,229,160,0.1);color:var(--green);}
+.ps-label{font-size:0.68rem;color:var(--muted);white-space:nowrap;}
+.ps-item.active .ps-label{color:var(--cyan);}
+.ps-line{width:36px;height:2px;background:var(--border);margin-bottom:18px;}
+@media(max-width:520px){.ps-line{width:16px;}.ps-label{font-size:0.6rem;}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:26px;margin-bottom:16px;}
+.card-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--cyan);margin-bottom:5px;display:flex;align-items:center;gap:8px;}
+.card-sub{color:var(--muted);font-size:0.83rem;margin-bottom:20px;line-height:1.6;}
+
+/* FORM */
+label{display:block;font-size:0.82rem;color:var(--muted);margin-bottom:5px;font-weight:500;}
+input[type=text],input[type=email],input[type=url],textarea,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:0.9rem;outline:none;transition:border 0.2s,box-shadow 0.2s;margin-bottom:14px;}
+input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,0.08);}
+textarea{resize:vertical;min-height:80px;}
+select{cursor:pointer;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:560px){.row2,.row3{grid-template-columns:1fr;}}
+
+/* PHOTO UPLOAD */
+.photo-zone{border:2px dashed var(--border2);border-radius:50%;width:140px;height:140px;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;overflow:hidden;position:relative;background:var(--s2);}
+.photo-zone:hover{border-color:var(--cyan);background:rgba(0,212,255,0.05);}
+.photo-zone.has-img{border-style:solid;border-color:var(--cyan);}
+.photo-zone img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.photo-zone .ph-icon{font-size:2rem;margin-bottom:4px;position:relative;z-index:1;}
+.photo-zone .ph-txt{font-size:0.7rem;color:var(--muted);text-align:center;position:relative;z-index:1;}
+.photo-zone.has-img .ph-icon,.photo-zone.has-img .ph-txt{display:none;}
+#photo-input{display:none;}
+.photo-wrap{text-align:center;margin-bottom:20px;}
+.photo-label{font-size:0.78rem;color:var(--muted);margin-top:6px;}
+
+/* SKILLS */
+.skills-container{margin-bottom:14px;}
+.skill-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.skill-item input{margin-bottom:0;flex:1;}
+.skill-level{width:100px!important;flex-shrink:0;}
+.add-skill-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px dashed var(--border2);border-radius:8px;padding:8px 14px;color:var(--muted);font-family:'Hind Siliguri',sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s;width:100%;}
+.add-skill-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* PROJECTS */
+.project-item{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+.project-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.project-num{font-size:0.75rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;font-weight:600;}
+.add-proj-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px dashed var(--border2);border-radius:8px;padding:10px 14px;color:var(--muted);font-family:'Hind Siliguri',sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s;width:100%;margin-bottom:14px;}
+.add-proj-btn:hover{border-color:var(--green);color:var(--green);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:8px;border:none;font-family:'Hind Siliguri',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-cyan{background:linear-gradient(135deg,var(--cyan),#0099cc);color:#000;box-shadow:0 4px 18px rgba(0,212,255,0.25);}
+.btn-cyan:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,212,255,0.35);}
+.btn-green{background:linear-gradient(135deg,var(--green),#00b87a);color:#000;font-weight:700;box-shadow:0 4px 18px rgba(0,229,160,0.25);}
+.btn-green:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,229,160,0.35);}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+.btn-danger{background:rgba(255,95,126,0.12);color:var(--red);border:1px solid rgba(255,95,126,0.25);padding:6px 12px;font-size:0.8rem;}
+.btn-sm{padding:7px 13px;font-size:0.8rem;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+
+/* ALERTS */
+.alert{border-radius:8px;padding:10px 14px;font-size:0.84rem;margin-bottom:12px;line-height:1.65;}
+.alert-yellow{background:rgba(255,208,96,0.07);border:1px solid rgba(255,208,96,0.25);color:#fde68a;}
+.alert-cyan{background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);color:#a5f3fc;}
+.alert-red{background:rgba(255,95,126,0.07);border:1px solid rgba(255,95,126,0.25);color:#fca5a5;}
+
+/* TOKEN STEPS */
+.tsteps{margin:10px 0 14px;}
+.tstep{display:flex;gap:10px;align-items:flex-start;padding:5px 0;font-size:0.83rem;color:var(--muted);}
+.tstep-n{width:20px;height:20px;border-radius:50%;background:rgba(0,212,255,0.12);color:var(--cyan);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+/* VIEWS */
+.view{display:none;}
+.view.active{display:block;}
+
+/* SUMMARY */
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+@media(max-width:480px){.sum-grid{grid-template-columns:1fr;}}
+.sum-item{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:11px 13px;}
+.sum-lbl{font-size:0.7rem;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.05em;}
+.sum-val{font-size:0.88rem;font-weight:600;color:var(--text);}
+
+/* PROGRESS */
+.prog-box{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px;}
+.prog-bar-wrap{background:var(--s1);border-radius:50px;height:7px;margin:10px 0;overflow:hidden;}
+.prog-bar{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width 0.4s;}
+.prog-log{font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--muted);max-height:130px;overflow-y:auto;line-height:2;}
+.log-ok{color:var(--green);}
+.log-err{color:var(--red);}
+.log-info{color:var(--cyan);}
+
+/* SUCCESS */
+.succ-box{background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.25);border-radius:12px;padding:24px;text-align:center;}
+.succ-box .si{font-size:2.8rem;margin-bottom:10px;}
+.succ-box h2{font-family:'Syne',sans-serif;color:var(--green);font-size:1.3rem;margin-bottom:8px;}
+.succ-box p{color:var(--muted);font-size:0.88rem;margin-bottom:14px;}
+.site-url-box{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--cyan);word-break:break-all;margin-bottom:14px;cursor:pointer;transition:background 0.2s;}
+.site-url-box:hover{background:var(--s3);}
+
+/* FLOAT BTN */
+.float-ins{position:fixed;bottom:22px;right:22px;z-index:500;background:linear-gradient(135deg,var(--cyan),#0099cc);color:#000;border:none;border-radius:50px;padding:11px 20px;font-family:'Hind Siliguri',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;box-shadow:0 4px 22px rgba(0,212,255,0.4);display:flex;align-items:center;gap:7px;transition:transform 0.2s,box-shadow 0.2s;}
+.float-ins:hover{transform:translateY(-2px);box-shadow:0 7px 28px rgba(0,212,255,0.5);}
+
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:14px;}
+.modal-ov.open{display:flex;}
+.modal-bx{background:var(--s1);border:1px solid var(--border2);border-radius:16px;max-width:660px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;animation:mIn 0.25s ease;}
+@keyframes mIn{from{transform:translateY(18px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.modal-hdr h2{font-family:'Syne',sans-serif;font-size:1.15rem;color:var(--cyan);}
+.mcls{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+.mcls:hover{color:var(--text);}
+.credit-bx{text-align:center;padding:16px;background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(180,142,255,0.06));border:1px solid rgba(0,212,255,0.2);border-radius:12px;margin-bottom:20px;}
+.credit-bx .ct{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.credit-bx .cm{font-size:0.86rem;color:var(--muted);line-height:1.8;}
+.credit-bx .cn{color:var(--cyan);font-weight:700;}
+.credit-bx .cc{color:var(--purple);font-weight:700;}
+.ins-sec{margin-bottom:18px;}
+.ins-sec h3{font-family:'Syne',sans-serif;font-size:0.92rem;font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;}
+.ins-sec h3.c1{color:var(--green);}
+.ins-sec h3.c2{color:var(--cyan);}
+.ins-sec h3.c3{color:var(--yellow);}
+.flist{list-style:none;}
+.flist li{display:flex;gap:9px;padding:6px 0;font-size:0.85rem;color:var(--muted);border-bottom:1px solid rgba(255,255,255,0.03);}
+.flist li:last-child{border:none;}
+.flist .fi{width:22px;text-align:center;flex-shrink:0;}
+.flist strong{color:var(--text);display:block;font-size:0.87rem;}
+.sf-flow{display:flex;flex-direction:column;}
+.sf-r{display:flex;gap:12px;align-items:flex-start;}
+.sf-l{display:flex;flex-direction:column;align-items:center;min-width:32px;}
+.sf-c{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:700;flex-shrink:0;}
+.sf-v{width:2px;height:24px;background:var(--border);}
+.sf-b{flex:1;padding-bottom:16px;}
+.sf-t{font-weight:700;font-size:0.9rem;margin-bottom:3px;}
+.sf-d{font-size:0.82rem;color:var(--muted);line-height:1.65;}
+.sf-arr{font-size:1.1rem;color:var(--dim);text-align:center;margin:1px 0 1px 14px;}
+.ca .sf-c{background:rgba(0,212,255,0.12);color:var(--cyan);border:2px solid var(--cyan);}
+.ca .sf-t{color:var(--cyan);}
+.cb .sf-c{background:rgba(0,229,160,0.12);color:var(--green);border:2px solid var(--green);}
+.cb .sf-t{color:var(--green);}
+.cc2 .sf-c{background:rgba(255,208,96,0.12);color:var(--yellow);border:2px solid var(--yellow);}
+.cc2 .sf-t{color:var(--yellow);}
+.cd .sf-c{background:rgba(180,142,255,0.12);color:var(--purple);border:2px solid var(--purple);}
+.cd .sf-t{color:var(--purple);}
+.ce .sf-c{background:rgba(0,229,160,0.18);color:#00e5a0;border:2px solid #00e5a0;}
+.ce .sf-t{color:#00e5a0;}
+.cf .sf-c{background:rgba(255,159,90,0.12);color:var(--orange);border:2px solid var(--orange);}
+.cf .sf-t{color:var(--orange);}
+
+/* SECTION DIVIDER */
+.sec-div{border:none;border-top:1px solid var(--border);margin:18px 0;}
+</style>
+</head>
+<body>
+
+<!-- FLOAT BUTTON -->
+<button class="float-ins" onclick="document.getElementById('ins-modal').classList.add('open')">📖 Instructions</button>
+
+<!-- MODAL -->
+<div class="modal-ov" id="ins-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-bx">
+    <div class="modal-hdr">
+      <h2>📖 Instructions & About</h2>
+      <button class="mcls" onclick="document.getElementById('ins-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="credit-bx">
+      <div class="ct">🎨 Portfolio Builder</div>
+      <div class="cm">This tool is made by <span class="cn">Swapnil Chowdhury</span><br>with the help of <span class="cc">Claude (Anthropic AI)</span></div>
+    </div>
+    <div class="ins-sec">
+      <h3 class="c1">✨ এই tool-এর বিশেষত্ব</h3>
+      <ul class="flist">
+        <li><span class="fi">✅</span><span><strong>কোনো coding লাগে না</strong>Facebook account খোলার মতো সহজ</span></li>
+        <li><span class="fi">✅</span><span><strong>Profile ছবি upload করা যায়</strong>মাঝখানে বড় করে দেখাবে</span></li>
+        <li><span class="fi">✅</span><span><strong>Skills, Projects, Experience</strong>সব কিছু form-এ লিখলেই হবে</span></li>
+        <li><span class="fi">✅</span><span><strong>4টা page তৈরি হয়</strong>Info, Skills, Projects, Contact</span></li>
+        <li><span class="fi">✅</span><span><strong>এক click-এ GitHub-এ live</strong>নিজেই সব upload করে দেয়</span></li>
+        <li><span class="fi">✅</span><span><strong>সম্পূর্ণ বিনামূল্যে</strong>GitHub Pages free!</span></li>
+      </ul>
+    </div>
+    <hr class="sec-div">
+    <div class="ins-sec">
+      <h3 class="c2">🔄 কীভাবে কাজ করে</h3>
+      <div class="sf-flow">
+        <div class="sf-r ca"><div class="sf-l"><div class="sf-c">১</div><div class="sf-v"></div></div><div class="sf-b"><div class="sf-t">🔑 GitHub Token দিন</div><div class="sf-d">একবার দিলেই হবে। এটা দিয়ে tool আপনার GitHub-এ file পাঠাবে।</div></div></div>
+        <div class="sf-arr">↓</div>
+        <div class="sf-r cb"><div class="sf-l"><div class="sf-c">২</div><div class="sf-v"></div></div><div class="sf-b"><div class="sf-t">📝 আপনার তথ্য দিন</div><div class="sf-d">নাম, profession, bio, address, hobby — form-এ পূরণ করুন।</div></div></div>
+        <div class="sf-arr">↓</div>
+        <div class="sf-r cc2"><div class="sf-l"><div class="sf-c">৩</div><div class="sf-v"></div></div><div class="sf-b"><div class="sf-t">🛠️ Skills যোগ করুন</div><div class="sf-d">আপনার দক্ষতা ও level লিখুন। যতটা দরকার যোগ করুন।</div></div></div>
+        <div class="sf-arr">↓</div>
+        <div class="sf-r cd"><div class="sf-l"><div class="sf-c">৪</div><div class="sf-v"></div></div><div class="sf-b"><div class="sf-t">💼 Projects যোগ করুন</div><div class="sf-d">Project নাম, description ও link দিন।</div></div></div>
+        <div class="sf-arr">↓</div>
+        <div class="sf-r cf"><div class="sf-l"><div class="sf-c">৫</div><div class="sf-v"></div></div><div class="sf-b"><div class="sf-t">📬 Contact info দিন</div><div class="sf-d">Email, phone, social links দিন।</div></div></div>
+        <div class="sf-arr">↓</div>
+        <div class="sf-r ce"><div class="sf-l"><div class="sf-c">✅</div></div><div class="sf-b"><div class="sf-t">🌐 Portfolio Live!</div><div class="sf-d">Upload চাপলেই সব GitHub-এ চলে যাবে। ১-২ মিনিটে live!</div></div></div>
+      </div>
+    </div>
+    <hr class="sec-div">
+    <div class="ins-sec">
+      <h3 class="c3">💡 জরুরি টিপস</h3>
+      <ul class="flist">
+        <li><span class="fi">⚠️</span><span><strong>Token কাউকে দেবেন না</strong>এটা GitHub-এর চাবি</span></li>
+        <li><span class="fi">📝</span><span><strong>Repo নামে space দেবেন না</strong>my-portfolio ✅ &nbsp; My Portfolio ❌</span></li>
+        <li><span class="fi">⏱️</span><span><strong>Live হতে ১-২ মিনিট লাগে</strong>upload-এর পরপরই যাবে না</span></li>
+      </ul>
+    </div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="btn btn-cyan" onclick="document.getElementById('ins-modal').classList.remove('open')">বুঝলাম, শুরু করি! →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app">
+
+  <div class="hdr">
+    <div class="hdr-badge"><div class="hdr-dot"></div>PORTFOLIO BUILDER</div>
+    <h1>আপনার Portfolio<br>তৈরি করুন</h1>
+    <p>তথ্য দিন — আমরা website বানিয়ে GitHub-এ upload করব</p>
+  </div>
+
+  <!-- STEP NAV -->
+  <div class="psteps">
+    <div class="ps-item active" id="pn-1"><div class="ps-num">১</div><div class="ps-label">GitHub</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item" id="pn-2"><div class="ps-num">২</div><div class="ps-label">আপনার তথ্য</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item" id="pn-3"><div class="ps-num">৩</div><div class="ps-label">Skills</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item" id="pn-4"><div class="ps-num">৪</div><div class="ps-label">Projects</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item" id="pn-5"><div class="ps-num">৫</div><div class="ps-label">Contact</div></div>
+    <div class="ps-line"></div>
+    <div class="ps-item" id="pn-6"><div class="ps-num">৬</div><div class="ps-label">Upload!</div></div>
+  </div>
+
+  <!-- ═══ STEP 1: GitHub ═══ -->
+  <div class="view active" id="v-1">
+    <div class="card">
+      <div class="card-title">🔑 GitHub সংযোগ</div>
+      <div class="card-sub">Token দিন — এটা দিয়ে আপনার GitHub-এ file upload হবে।</div>
+      <div class="alert alert-yellow">
+        💡 <strong>Token কীভাবে পাবেন?</strong>
+        <div class="tsteps">
+          <div class="tstep"><div class="tstep-n">১</div><span>github.com → Profile ছবি → <strong>Settings</strong></span></div>
+          <div class="tstep"><div class="tstep-n">২</div><span>নিচে → <strong>Developer settings</strong> → <strong>Personal access tokens</strong> → <strong>Tokens (classic)</strong></span></div>
+          <div class="tstep"><div class="tstep-n">৩</div><span><strong>Generate new token (classic)</strong> → Note: যেকোনো কিছু</span></div>
+          <div class="tstep"><div class="tstep-n">৪</div><span><strong>repo</strong> checkbox ✅ → <strong>Generate token</strong> → Copy করুন</span></div>
+        </div>
+      </div>
+      <label>GitHub Personal Access Token</label>
+      <input type="password" id="f-token" placeholder="ghp_xxxxxxxxxxxxxxxxxx">
+      <label>GitHub Username</label>
+      <input type="text" id="f-username" placeholder="যেমন: swapnilchowdhury-2003">
+      <label>Repository নাম (নতুন তৈরি হবে — space ছাড়া)</label>
+      <input type="text" id="f-repo" placeholder="যেমন: my-portfolio">
+      <div class="alert alert-cyan">🌐 Repository <strong>public</strong> হলেই GitHub Pages বিনামূল্যে কাজ করবে।</div>
+      <div class="btn-row">
+        <button class="btn btn-cyan" onclick="saveStep1()">পরের ধাপ →</button>
+      </div>
+      <div id="err-1" class="alert alert-red" style="display:none;margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2: Personal Info ═══ -->
+  <div class="view" id="v-2">
+    <div class="card">
+      <div class="card-title">👤 আপনার তথ্য</div>
+      <div class="card-sub">আপনার personal information দিন। যা জানেন তাই দিন, বাকিটা ফাঁকা রাখুন।</div>
+
+      <!-- Profile Photo -->
+      <div class="photo-wrap">
+        <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-input').click()">
+          <div class="ph-icon">📷</div>
+          <div class="ph-txt">ছবি যোগ করুন<br>(click করুন)</div>
+        </div>
+        <div class="photo-label">Profile Photo (ঐচ্ছিক)</div>
+        <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(this.files[0])">
+      </div>
+
+      <div class="row2">
+        <div><label>পুরো নাম *</label><input type="text" id="f-name" placeholder="যেমন: Swapnil Chowdhury"></div>
+        <div><label>Profession / পেশা *</label><input type="text" id="f-profession" placeholder="যেমন: Web Developer"></div>
+      </div>
+      <label>Bio / নিজের সম্পর্কে</label>
+      <textarea id="f-bio" placeholder="আপনার সম্পর্কে ২-৩ লাইন লিখুন..."></textarea>
+      <div class="row2">
+        <div><label>Experience (বছর)</label><input type="text" id="f-experience" placeholder="যেমন: 2 years"></div>
+        <div><label>Education / শিক্ষা</label><input type="text" id="f-education" placeholder="যেমন: BSc in CSE"></div>
+      </div>
+      <div class="row2">
+        <div><label>Location / ঠিকানা</label><input type="text" id="f-location" placeholder="যেমন: Comilla, Bangladesh"></div>
+        <div><label>Date of Birth</label><input type="text" id="f-dob" placeholder="যেমন: 15 Jan 2003"></div>
+      </div>
+      <div class="row2">
+        <div><label>Nationality / জাতীয়তা</label><input type="text" id="f-nationality" placeholder="যেমন: Bangladeshi"></div>
+        <div><label>Languages / ভাষা</label><input type="text" id="f-languages" placeholder="যেমন: Bengali, English"></div>
+      </div>
+      <label>Hobbies / শখ</label>
+      <input type="text" id="f-hobbies" placeholder="যেমন: Reading, Photography, Coding">
+      <label>Work Experience (বিস্তারিত)</label>
+      <textarea id="f-workexp" placeholder="আগে কোথায় কাজ করেছেন, কী ধরনের কাজ করেছেন..."></textarea>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goStep(1)">← আগে</button>
+        <button class="btn btn-cyan" onclick="saveStep2()">পরের ধাপ →</button>
+      </div>
+      <div id="err-2" class="alert alert-red" style="display:none;margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3: Skills ═══ -->
+  <div class="view" id="v-3">
+    <div class="card">
+      <div class="card-title">🛠️ Skills / দক্ষতা</div>
+      <div class="card-sub">আপনার skills লিখুন এবং level বেছে নিন।</div>
+      <div class="skills-container" id="skills-list"></div>
+      <button class="add-skill-btn" onclick="addSkill()">＋ আরো Skill যোগ করুন</button>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goStep(2)">← আগে</button>
+        <button class="btn btn-cyan" onclick="goStep(4)">পরের ধাপ →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 4: Projects ═══ -->
+  <div class="view" id="v-4">
+    <div class="card">
+      <div class="card-title">💼 Projects</div>
+      <div class="card-sub">আপনার projects-এর বিবরণ দিন।</div>
+      <div id="projects-list"></div>
+      <button class="add-proj-btn" onclick="addProject()">＋ নতুন Project যোগ করুন</button>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goStep(3)">← আগে</button>
+        <button class="btn btn-cyan" onclick="goStep(5)">পরের ধাপ →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 5: Contact ═══ -->
+  <div class="view" id="v-5">
+    <div class="card">
+      <div class="card-title">📬 Contact তথ্য</div>
+      <div class="card-sub">মানুষ যেন আপনার সাথে যোগাযোগ করতে পারে।</div>
+      <div class="row2">
+        <div><label>Email</label><input type="email" id="f-email" placeholder="your@email.com"></div>
+        <div><label>Phone</label><input type="text" id="f-phone" placeholder="+880 1XXX XXXXXX"></div>
+      </div>
+      <div class="row2">
+        <div><label>GitHub Profile Link</label><input type="url" id="f-github" placeholder="https://github.com/username"></div>
+        <div><label>LinkedIn</label><input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/..."></div>
+      </div>
+      <div class="row2">
+        <div><label>Facebook</label><input type="url" id="f-facebook" placeholder="https://facebook.com/..."></div>
+        <div><label>Website / Portfolio Link</label><input type="url" id="f-website" placeholder="https://..."></div>
+      </div>
+      <label>থিম কালার বেছে নিন</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;" id="color-row">
+        <div class="cc-opt selected" data-c="#00d4ff" style="background:#00d4ff;" onclick="pickColor(this)"></div>
+        <div class="cc-opt" data-c="#00e5a0" style="background:#00e5a0;" onclick="pickColor(this)"></div>
+        <div class="cc-opt" data-c="#b48eff" style="background:#b48eff;" onclick="pickColor(this)"></div>
+        <div class="cc-opt" data-c="#ff9f5a" style="background:#ff9f5a;" onclick="pickColor(this)"></div>
+        <div class="cc-opt" data-c="#ff5f7e" style="background:#ff5f7e;" onclick="pickColor(this)"></div>
+        <div class="cc-opt" data-c="#ffd060" style="background:#ffd060;" onclick="pickColor(this)"></div>
+      </div>
+      <style>.cc-opt{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;}.cc-opt.selected{border-color:#fff;transform:scale(1.15);}</style>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goStep(4)">← আগে</button>
+        <button class="btn btn-cyan" onclick="goStep(6)">পরের ধাপ →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 6: Upload ═══ -->
+  <div class="view" id="v-6">
+    <div class="card">
+      <div class="card-title">🚀 সব ঠিক আছে? Upload করুন!</div>
+      <div class="card-sub">নিচে সব দেখুন, তারপর Upload চাপুন।</div>
+      <div class="sum-grid" id="sum-grid"></div>
+      <div id="upload-sec">
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="goStep(5)">← আগে</button>
+          <button class="btn btn-green" onclick="startUpload()">⚡ GitHub-এ Upload করুন</button>
+        </div>
+      </div>
+      <div class="prog-box" id="prog-box" style="display:none;">
+        <div style="font-size:0.85rem;color:var(--muted);" id="prog-status">শুরু হচ্ছে...</div>
+        <div class="prog-bar-wrap"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+        <div class="prog-log" id="prog-log"></div>
+      </div>
+      <div class="succ-box" id="succ-box" style="display:none;">
+        <div class="si">🎉</div>
+        <h2>Portfolio Live হয়ে গেছে!</h2>
+        <p>১-২ মিনিট পর এই লিংকে আপনার portfolio দেখবেন:</p>
+        <div class="site-url-box" id="live-url" onclick="copyLiveUrl()">লোড হচ্ছে...</div>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;">👆 click করলে copy হবে</p>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-cyan" onclick="openLive()">🌐 Portfolio খুলুন</button>
+          <button class="btn btn-ghost" onclick="resetAll()">🔄 নতুন করে</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──
+const D = {
+  token:'', username:'', repo:'',
+  name:'', profession:'', bio:'', experience:'', education:'',
+  location:'', dob:'', nationality:'', languages:'', hobbies:'', workexp:'',
+  photo: null, photoName: 'profile.jpg',
+  skills: [], projects: [],
+  email:'', phone:'', github:'', linkedin:'', facebook:'', website:'',
+  themeColor: '#00d4ff'
+};
+
+// ── NAV ──
+function goStep(n) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('v-' + n).classList.add('active');
+  document.querySelectorAll('.ps-item').forEach((el, i) => {
+    el.classList.remove('active','done');
+    if (i+1===n) el.classList.add('active');
+    else if (i+1<n) el.classList.add('done');
+  });
+  if (n===6) buildSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function err(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; }
+function clearErr(id) { document.getElementById(id).style.display='none'; }
+
+// ── STEP 1 ──
+function saveStep1() {
+  D.token = document.getElementById('f-token').value.trim();
+  D.username = document.getElementById('f-username').value.trim();
+  D.repo = document.getElementById('f-repo').value.trim();
+  if (!D.token) { err('err-1','⚠️ Token দিন'); return; }
+  if (!D.username) { err('err-1','⚠️ Username দিন'); return; }
+  if (!D.repo) { err('err-1','⚠️ Repository নাম দিন'); return; }
+  if (/\s/.test(D.repo)) { err('err-1','⚠️ Repository নামে space দেওয়া যাবে না'); return; }
+  clearErr('err-1');
+  if (D.skills.length===0) initSkills();
+  if (D.projects.length===0) initProjects();
+  goStep(2);
+}
+
+// ── STEP 2 ──
+function saveStep2() {
+  D.name = document.getElementById('f-name').value.trim();
+  D.profession = document.getElementById('f-profession').value.trim();
+  if (!D.name) { err('err-2','⚠️ নাম দিন'); return; }
+  if (!D.profession) { err('err-2','⚠️ Profession দিন'); return; }
+  D.bio = document.getElementById('f-bio').value.trim();
+  D.experience = document.getElementById('f-experience').value.trim();
+  D.education = document.getElementById('f-education').value.trim();
+  D.location = document.getElementById('f-location').value.trim();
+  D.dob = document.getElementById('f-dob').value.trim();
+  D.nationality = document.getElementById('f-nationality').value.trim();
+  D.languages = document.getElementById('f-languages').value.trim();
+  D.hobbies = document.getElementById('f-hobbies').value.trim();
+  D.workexp = document.getElementById('f-workexp').value.trim();
+  clearErr('err-2');
+  goStep(3);
+}
+
+// ── PHOTO ──
+function handlePhoto(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    D.photo = e.target.result;
+    D.photoName = file.name.toLowerCase().replace(/\s+/g,'-');
+    const zone = document.getElementById('photo-zone');
+    zone.classList.add('has-img');
+    let img = zone.querySelector('img');
+    if (!img) { img = document.createElement('img'); zone.appendChild(img); }
+    img.src = D.photo;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── SKILLS ──
+function initSkills() {
+  D.skills = [{name:'HTML',level:'Intermediate'},{name:'CSS',level:'Intermediate'},{name:'JavaScript',level:'Beginner'}];
+  renderSkills();
+}
+function renderSkills() {
+  const c = document.getElementById('skills-list'); c.innerHTML='';
+  D.skills.forEach((s,i) => {
+    const div = document.createElement('div'); div.className='skill-item';
+    div.innerHTML=`<input type="text" placeholder="Skill নাম (যেমন: Photoshop)" value="${s.name}" onchange="D.skills[${i}].name=this.value" style="margin-bottom:0;">
+      <select class="skill-level" onchange="D.skills[${i}].level=this.value" style="margin-bottom:0;">
+        <option ${s.level==='Beginner'?'selected':''}>Beginner</option>
+        <option ${s.level==='Intermediate'?'selected':''}>Intermediate</option>
+        <option ${s.level==='Advanced'?'selected':''}>Advanced</option>
+        <option ${s.level==='Expert'?'selected':''}>Expert</option>
+      </select>
+      <button class="btn btn-danger btn-sm" onclick="removeSkill(${i})">✕</button>`;
+    c.appendChild(div);
+  });
+}
+function addSkill() { D.skills.push({name:'',level:'Beginner'}); renderSkills(); }
+function removeSkill(i) { D.skills.splice(i,1); renderSkills(); }
+
+// ── PROJECTS ──
+function initProjects() {
+  D.projects = [{title:'',desc:'',link:'',tech:''}];
+  renderProjects();
+}
+function renderProjects() {
+  const c = document.getElementById('projects-list'); c.innerHTML='';
+  D.projects.forEach((p,i) => {
+    const div = document.createElement('div'); div.className='project-item';
+    div.innerHTML=`<div class="project-item-header"><span class="project-num">PROJECT ${i+1}</span>${D.projects.length>1?`<button class="btn btn-danger btn-sm" onclick="removeProject(${i})">✕ সরান</button>`:''}</div>
+      <label>Project নাম</label><input type="text" placeholder="যেমন: E-commerce Website" value="${p.title}" onchange="D.projects[${i}].title=this.value">
+      <label>বিবরণ</label><textarea placeholder="এই project-এ কী করেছেন, কী শিখেছেন..." onchange="D.projects[${i}].desc=this.value">${p.desc}</textarea>
+      <div class="row2">
+        <div><label>Project Link (GitHub/Live)</label><input type="url" placeholder="https://..." value="${p.link}" onchange="D.projects[${i}].link=this.value"></div>
+        <div><label>Technology ব্যবহার</label><input type="text" placeholder="যেমন: HTML, CSS, JS" value="${p.tech}" onchange="D.projects[${i}].tech=this.value"></div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+function addProject() { D.projects.push({title:'',desc:'',link:'',tech:''}); renderProjects(); }
+function removeProject(i) { D.projects.splice(i,1); renderProjects(); }
+
+// ── COLOR ──
+function pickColor(el) {
+  document.querySelectorAll('.cc-opt').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); D.themeColor = el.dataset.c;
+}
+
+// ── SUMMARY ──
+function buildSummary() {
+  D.email = document.getElementById('f-email').value.trim();
+  D.phone = document.getElementById('f-phone').value.trim();
+  D.github = document.getElementById('f-github').value.trim();
+  D.linkedin = document.getElementById('f-linkedin').value.trim();
+  D.facebook = document.getElementById('f-facebook').value.trim();
+  D.website = document.getElementById('f-website').value.trim();
+  document.getElementById('sum-grid').innerHTML=`
+    <div class="sum-item"><div class="sum-lbl">নাম</div><div class="sum-val">${D.name}</div></div>
+    <div class="sum-item"><div class="sum-lbl">Profession</div><div class="sum-val">${D.profession}</div></div>
+    <div class="sum-item"><div class="sum-lbl">Repository</div><div class="sum-val">${D.repo}</div></div>
+    <div class="sum-item"><div class="sum-lbl">Skills / Projects</div><div class="sum-val">${D.skills.length}টি / ${D.projects.length}টি</div></div>`;
+}
+
+// ── HTML GENERATORS ──
+function nav(active) {
+  const c = D.themeColor;
+  const pages = [{f:'index.html',n:'Home'},{f:'skills.html',n:'Skills'},{f:'projects.html',n:'Projects'},{f:'contact.html',n:'Contact'}];
+  return pages.map(p=>`<a href="${p.f}" class="${p.n===active?'active':''}">${p.n}</a>`).join('');
+}
+
+function genCSS() {
+  const c = D.themeColor;
+  return `@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Syne:wght@700;800&display=swap');
+:root{--c:${c};--bg:#060810;--s1:#0b0f1c;--s2:#101525;--border:#1a2540;--text:#dde8f8;--muted:#526480;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,${c}12,transparent);pointer-events:none;}
+a{color:var(--c);text-decoration:none;}
+.nav{background:rgba(11,15,28,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-i{max-width:960px;margin:0 auto;padding:0 20px;height:60px;display:flex;align-items:center;gap:16px;}
+.nav-brand{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--c);flex-shrink:0;}
+.nav-links{display:flex;gap:2px;flex:1;}
+.nav-links a{padding:6px 13px;border-radius:6px;font-size:0.86rem;color:var(--muted);transition:all 0.2s;}
+.nav-links a:hover,.nav-links a.active{background:${c}18;color:var(--c);}
+main{max-width:960px;margin:0 auto;padding:40px 20px 80px;position:relative;z-index:1;}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:60px 0 48px;}
+.hero-img{width:160px;height:160px;border-radius:50%;object-fit:cover;border:4px solid var(--c);box-shadow:0 0 40px ${c}40;margin-bottom:24px;animation:imgIn 0.8s ease;}
+.hero-img-placeholder{width:160px;height:160px;border-radius:50%;background:var(--s2);border:4px solid var(--border);margin-bottom:24px;display:flex;align-items:center;justify-content:center;font-size:3rem;}
+@keyframes imgIn{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
+.hero h1{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,var(--c),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;animation:fadeUp 0.6s ease 0.1s both;}
+.hero .profession{font-size:1.1rem;color:var(--c);font-weight:600;margin-bottom:14px;animation:fadeUp 0.6s ease 0.2s both;}
+.hero .bio{color:var(--muted);max-width:560px;line-height:1.8;font-size:0.95rem;animation:fadeUp 0.6s ease 0.3s both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:36px;}
+.info-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:16px;transition:border 0.2s;}
+.info-card:hover{border-color:var(--c);}
+.info-card .ic-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px;}
+.info-card .ic-val{font-size:0.92rem;font-weight:600;color:var(--text);}
+.page-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--c),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.page-sub{color:var(--muted);font-size:0.88rem;margin-bottom:32px;}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.skill-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.skill-name{font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.skill-lbl{font-size:0.72rem;color:var(--c);background:${c}15;padding:2px 8px;border-radius:20px;}
+.skill-bar-bg{background:var(--s2);border-radius:50px;height:6px;overflow:hidden;}
+.skill-bar{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--c),${c}88);}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.proj-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.2s;}
+.proj-card:hover{border-color:var(--c);transform:translateY(-2px);box-shadow:0 8px 32px ${c}18;}
+.proj-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+.proj-desc{font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+.proj-tech{font-size:0.75rem;color:var(--c);background:${c}12;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:12px;}
+.proj-link{display:inline-flex;align-items:center;gap:5px;font-size:0.82rem;font-weight:600;color:var(--c);border:1px solid ${c}40;padding:5px 12px;border-radius:6px;transition:all 0.2s;}
+.proj-link:hover{background:${c}15;}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.contact-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+.contact-card:hover{border-color:var(--c);}
+.contact-icon{font-size:1.4rem;flex-shrink:0;}
+.contact-lbl{font-size:0.72rem;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.contact-val{font-size:0.88rem;font-weight:600;color:var(--text);word-break:break-all;}
+footer{text-align:center;padding:24px;color:var(--muted);font-size:0.8rem;border-top:1px solid var(--border);}
+@media(max-width:600px){.hero h1{font-size:2rem;}.nav-links a{padding:5px 9px;font-size:0.8rem;}}`;
+}
+
+function genJS() { return `console.log('Portfolio loaded!');`; }
+
+function skillPct(level) {
+  return {Beginner:30, Intermediate:60, Advanced:80, Expert:100}[level] || 50;
+}
+
+function genIndex() {
+  const photoEl = D.photo
+    ? `<img class="hero-img" src="images/${D.photoName}" alt="${D.name}">`
+    : `<div class="hero-img-placeholder">👤</div>`;
+  const infoItems = [
+    D.experience && {l:'Experience', v:D.experience},
+    D.education && {l:'Education', v:D.education},
+    D.location && {l:'Location', v:D.location},
+    D.dob && {l:'Date of Birth', v:D.dob},
+    D.nationality && {l:'Nationality', v:D.nationality},
+    D.languages && {l:'Languages', v:D.languages},
+    D.hobbies && {l:'Hobbies', v:D.hobbies},
+  ].filter(Boolean);
+  const infoGrid = infoItems.length ? `<div class="info-grid">${infoItems.map(i=>`<div class="info-card"><div class="ic-label">${i.l}</div><div class="ic-val">${i.v}</div></div>`).join('')}</div>` : '';
+  const workexp = D.workexp ? `<div class="info-card" style="margin-top:20px;grid-column:1/-1"><div class="ic-label">Work Experience</div><div class="ic-val" style="font-weight:400;line-height:1.8;white-space:pre-wrap;">${D.workexp}</div></div>` : '';
+  return `<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${D.name} — Portfolio</title><link rel="stylesheet" href="css/style.css"></head><body>
+<nav class="nav"><div class="nav-i"><span class="nav-brand">${D.name}</span><div class="nav-links">${nav('Home')}</div></div></nav>
+<main>
+<div class="hero">${photoEl}<h1>${D.name}</h1><div class="profession">${D.profession}</div>${D.bio?`<div class="bio">${D.bio}</div>`:''}</div>
+${infoGrid}${workexp}
+</main>
+<footer><p>© ${new Date().getFullYear()} ${D.name} · Made with Portfolio Builder</p></footer>
+<script src="js/script.js"><\/script></body></html>`;
+}
+
+function genSkills() {
+  const cards = D.skills.map(s=>`<div class="skill-card"><div class="skill-name">${s.name}<span class="skill-lbl">${s.level}</span></div><div class="skill-bar-bg"><div class="skill-bar" style="width:${skillPct(s.level)}%"></div></div></div>`).join('');
+  return `<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Skills — ${D.name}</title><link rel="stylesheet" href="css/style.css"></head><body>
+<nav class="nav"><div class="nav-i"><span class="nav-brand">${D.name}</span><div class="nav-links">${nav('Skills')}</div></div></nav>
+<main><div class="page-title">Skills & দক্ষতা</div><div class="page-sub">আমার কারিগরি ও সৃজনশীল দক্ষতা</div><div class="skills-grid">${cards}</div></main>
+<footer><p>© ${new Date().getFullYear()} ${D.name}</p></footer><script src="js/script.js"><\/script></body></html>`;
+}
+
+function genProjects() {
+  const cards = D.projects.filter(p=>p.title).map(p=>`<div class="proj-card"><div class="proj-title">${p.title}</div>${p.desc?`<div class="proj-desc">${p.desc}</div>`:''} ${p.tech?`<div class="proj-tech">${p.tech}</div>`:''} ${p.link?`<a href="${p.link}" target="_blank" class="proj-link">🔗 দেখুন</a>`:''}</div>`).join('');
+  return `<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Projects — ${D.name}</title><link rel="stylesheet" href="css/style.css"></head><body>
+<nav class="nav"><div class="nav-i"><span class="nav-brand">${D.name}</span><div class="nav-links">${nav('Projects')}</div></div></nav>
+<main><div class="page-title">আমার Projects</div><div class="page-sub">আমি যা বানিয়েছি</div><div class="proj-grid">${cards||'<p style="color:var(--muted)">কোনো project যোগ করা হয়নি।</p>'}</div></main>
+<footer><p>© ${new Date().getFullYear()} ${D.name}</p></footer><script src="js/script.js"><\/script></body></html>`;
+}
+
+function genContact() {
+  const items = [
+    D.email && {icon:'📧', l:'Email', v:D.email, href:`mailto:${D.email}`},
+    D.phone && {icon:'📞', l:'Phone', v:D.phone, href:`tel:${D.phone}`},
+    D.github && {icon:'🐙', l:'GitHub', v:'Profile দেখুন', href:D.github},
+    D.linkedin && {icon:'💼', l:'LinkedIn', v:'Profile দেখুন', href:D.linkedin},
+    D.facebook && {icon:'👤', l:'Facebook', v:'Profile দেখুন', href:D.facebook},
+    D.website && {icon:'🌐', l:'Website', v:'দেখুন', href:D.website},
+  ].filter(Boolean);
+  const cards = items.map(i=>`<a href="${i.href}" target="_blank" class="contact-card"><div class="contact-icon">${i.icon}</div><div><div class="contact-lbl">${i.l}</div><div class="contact-val">${i.v}</div></div></a>`).join('');
+  return `<!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Contact — ${D.name}</title><link rel="stylesheet" href="css/style.css"></head><body>
+<nav class="nav"><div class="nav-i"><span class="nav-brand">${D.name}</span><div class="nav-links">${nav('Contact')}</div></div></nav>
+<main><div class="page-title">যোগাযোগ করুন</div><div class="page-sub">আমার সাথে connect করুন</div><div class="contact-grid">${cards||'<p style="color:var(--muted)">কোনো contact তথ্য দেওয়া হয়নি।</p>'}</div></main>
+<footer><p>© ${new Date().getFullYear()} ${D.name}</p></footer><script src="js/script.js"><\/script></body></html>`;
+}
+
+// ── GITHUB API ──
+async function api(method, path, body) {
+  const res = await fetch(`https://api.github.com${path}`, {
+    method, headers: {'Authorization':`token ${D.token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data;
+}
+function b64(str) { return btoa(unescape(encodeURIComponent(str))); }
+function log(msg, t='info') {
+  const el = document.getElementById('prog-log');
+  el.innerHTML += `<div class="log-${t}">${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+function setP(pct, txt) { document.getElementById('prog-bar').style.width=pct+'%'; document.getElementById('prog-status').textContent=txt; }
+
+async function upload(path, content, isB64=false) {
+  let sha;
+  try { const ex = await api('GET',`/repos/${D.username}/${D.repo}/contents/${path}`); sha=ex.sha; } catch(e){sha=null;}
+  const body = {message:`Add ${path}`, content: isB64 ? content : b64(content)};
+  if (sha) body.sha = sha;
+  await api('PUT', `/repos/${D.username}/${D.repo}/contents/${path}`, body);
+}
+
+async function startUpload() {
+  document.getElementById('upload-sec').style.display='none';
+  document.getElementById('prog-box').style.display='block';
+  setP(0,'শুরু হচ্ছে...');
+  try {
+    log('📁 Repository তৈরি হচ্ছে...');
+    try { await api('POST','/user/repos',{name:D.repo,description:`${D.name}'s Portfolio`,private:false,auto_init:true}); log('✅ Repository তৈরি','ok'); }
+    catch(e){ if(e.message.includes('already exists')){log('ℹ️ Repository আগেই আছে','info');}else throw e; }
+    await new Promise(r=>setTimeout(r,1500));
+
+    setP(10,'CSS upload হচ্ছে...');
+    log('🎨 style.css...'); await upload('css/style.css', genCSS()); log('✅ CSS হলো','ok');
+
+    setP(18,'JS upload হচ্ছে...');
+    log('⚙️ script.js...'); await upload('js/script.js', genJS()); log('✅ JS হলো','ok');
+
+    if (D.photo) {
+      setP(25,'Profile ছবি upload হচ্ছে...');
+      log(`🖼️ ${D.photoName}...`); await upload(`images/${D.photoName}`, D.photo.split(',')[1], true); log('✅ ছবি হলো','ok');
+    }
+
+    setP(40,'Home page তৈরি হচ্ছে...');
+    log('📄 index.html...'); await upload('index.html', genIndex()); log('✅ Home হলো','ok');
+
+    setP(55,'Skills page...');
+    log('📄 skills.html...'); await upload('skills.html', genSkills()); log('✅ Skills হলো','ok');
+
+    setP(70,'Projects page...');
+    log('📄 projects.html...'); await upload('projects.html', genProjects()); log('✅ Projects হলো','ok');
+
+    setP(82,'Contact page...');
+    log('📄 contact.html...'); await upload('contact.html', genContact()); log('✅ Contact হলো','ok');
+
+    setP(92,'GitHub Pages চালু হচ্ছে...');
+    log('🚀 GitHub Pages enable...');
+    try { await api('POST',`/repos/${D.username}/${D.repo}/pages`,{source:{branch:'main',path:'/'}}); log('✅ Pages চালু!','ok'); }
+    catch(e){ log('ℹ️ Pages হয়তো আগেই চালু','info'); }
+
+    setP(100,'✅ সব হয়ে গেছে!');
+    log('🎉 Portfolio upload সম্পন্ন!','ok');
+    const url = `https://${D.username}.github.io/${D.repo}/`;
+    document.getElementById('live-url').textContent = url;
+    document.getElementById('live-url').dataset.url = url;
+    setTimeout(()=>{ document.getElementById('succ-box').style.display='block'; }, 500);
+  } catch(e) {
+    log('❌ Error: '+e.message,'err');
+    log('Token ও Username ঠিক আছে কিনা দেখুন','info');
+    setP(0,'❌ সমস্যা হয়েছে');
+    document.getElementById('upload-sec').style.display='block';
+  }
+}
+
+function copyLiveUrl() {
+  const url = document.getElementById('live-url').dataset.url;
+  navigator.clipboard.writeText(url).then(()=>{ document.getElementById('live-url').textContent='✅ Copied!'; setTimeout(()=>{ document.getElementById('live-url').textContent=url; },1500); });
+}
+function openLive() { window.open(document.getElementById('live-url').dataset.url,'_blank'); }
+function resetAll() {
+  Object.assign(D,{token:'',username:'',repo:'',name:'',profession:'',bio:'',experience:'',education:'',location:'',dob:'',nationality:'',languages:'',hobbies:'',workexp:'',photo:null,photoName:'profile.jpg',skills:[],projects:[],email:'',phone:'',github:'',linkedin:'',facebook:'',website:'',themeColor:'#00d4ff'});
+  ['f-token','f-username','f-repo','f-name','f-profession','f-bio','f-experience','f-education','f-location','f-dob','f-nationality','f-languages','f-hobbies','f-workexp','f-email','f-phone','f-github','f-linkedin','f-facebook','f-website'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('photo-zone').classList.remove('has-img');
+  document.getElementById('prog-box').style.display='none';
+  document.getElementById('succ-box').style.display='none';
+  document.getElementById('upload-sec').style.display='block';
+  document.getElementById('prog-log').innerHTML='';
+  goStep(1);
+}
+</script>
+</body>
+</html>
